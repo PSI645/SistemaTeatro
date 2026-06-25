@@ -1,0 +1,38 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --cor-primaria:   #1a1a2e;
+  --cor-secundaria: #e94560;
+  --cor-fundo:      #0f0f1a;
+  --cor-superficie: #16213e;
+  --cor-texto:      #eaeaea;
+  --cor-texto-suave:#a0a0b0;
+  --cor-borda:      #2a2a4a;
+  --raio:           8px;
+  --sombra:         0 4px 20px rgba(0,0,0,0.4);
+}
+
+body {
+  background-color: var(--cor-fundo);
+  color: var(--cor-texto);
+  font-family: 'Segoe UI', sans-serif;
+  min-height: 100vh;
+}
+
+a {
+  color: var(--cor-secundaria);
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+input, select, textarea {
+  font-family: inherit;
+}
