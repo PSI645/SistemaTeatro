@@ -35,34 +35,39 @@ async function loginUsuario(req, res) {
   }
 }
 
-// Login de cliente
 async function loginCliente(req, res) {
   const { email, senha } = req.body;
 
   try {
-    const [rows] = await pool.query(
-      'SELECT * FROM clientes WHERE email = ?',
+    // tenta encontrar nas duas tabelas
+    const [clientes] = await pool.query(
+      'SELECT *, "cliente" AS perfil FROM clientes WHERE email = ?',
       [email]
     );
 
-    if (!rows.length) {
+    const [usuarios] = await pool.query(
+      'SELECT * FROM usuarios WHERE email = ? AND ativo = 1 AND perfil = "ator"',
+      [email]
+    );
+
+    const registro = clientes[0] || usuarios[0];
+
+    if (!registro) {
       return res.status(401).json({ erro: 'Credenciais invalidas.' });
     }
 
-    const cliente = rows[0];
-    const senhaValida = await bcrypt.compare(senha, cliente.senha);
-
+    const senhaValida = await bcrypt.compare(senha, registro.senha);
     if (!senhaValida) {
       return res.status(401).json({ erro: 'Credenciais invalidas.' });
     }
 
     const token = jwt.sign(
-      { id: cliente.id, perfil: 'cliente', nome: cliente.nome },
+      { id: registro.id, perfil: registro.perfil, nome: registro.nome },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES_IN }
     );
 
-    return res.json({ token, perfil: 'cliente', nome: cliente.nome });
+    return res.json({ token, perfil: registro.perfil, nome: registro.nome });
   } catch (err) {
     return res.status(500).json({ erro: 'Erro interno.', detalhe: err.message });
   }

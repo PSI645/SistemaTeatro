@@ -1,6 +1,3 @@
--- ============================================================
--- SISTEMA DE TEATRO - Schema do Banco de Dados
--- ============================================================
 
 CREATE DATABASE IF NOT EXISTS sistema_teatro
   CHARACTER SET utf8mb4
@@ -8,10 +5,6 @@ CREATE DATABASE IF NOT EXISTS sistema_teatro
 
 USE sistema_teatro;
 
--- ------------------------------------------------------------
--- TABELA: clientes
--- Pessoas que compram ingressos
--- ------------------------------------------------------------
 CREATE TABLE clientes (
   id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   nome        VARCHAR(150)        NOT NULL,
@@ -22,10 +15,6 @@ CREATE TABLE clientes (
   criado_em   TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- ------------------------------------------------------------
--- TABELA: usuarios
--- Gestores e atores com acesso ao painel administrativo
--- ------------------------------------------------------------
 CREATE TABLE usuarios (
   id        INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   nome      VARCHAR(150)                        NOT NULL,
@@ -36,10 +25,6 @@ CREATE TABLE usuarios (
   criado_em TIMESTAMP                           NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- ------------------------------------------------------------
--- TABELA: pecas
--- Pecas de teatro cadastradas pelo gestor
--- ------------------------------------------------------------
 CREATE TABLE pecas (
   id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   nome       VARCHAR(200)  NOT NULL,
@@ -48,11 +33,6 @@ CREATE TABLE pecas (
   criado_em  TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- ------------------------------------------------------------
--- TABELA: atores
--- Perfil dos atores cadastrados
--- Pode ser vinculado a um usuario do tipo 'ator'
--- ------------------------------------------------------------
 CREATE TABLE atores (
   id           INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   usuario_id   INT UNSIGNED UNIQUE,          -- NULL se cadastrado so pelo gestor
@@ -67,10 +47,6 @@ CREATE TABLE atores (
     ON DELETE SET NULL
 );
 
--- ------------------------------------------------------------
--- TABELA: sessoes
--- Cada sessao referencia uma peca e tem seus proprios dados
--- ------------------------------------------------------------
 CREATE TABLE sessoes (
   id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   nome            VARCHAR(200)    NOT NULL,
@@ -86,10 +62,6 @@ CREATE TABLE sessoes (
     ON DELETE RESTRICT
 );
 
--- ------------------------------------------------------------
--- TABELA: sessao_atores
--- Relacionamento N:N entre sessoes e atores
--- ------------------------------------------------------------
 CREATE TABLE sessao_atores (
   sessao_id   INT UNSIGNED NOT NULL,
   ator_id     INT UNSIGNED NOT NULL,
@@ -105,11 +77,6 @@ CREATE TABLE sessao_atores (
     ON DELETE CASCADE
 );
 
--- ------------------------------------------------------------
--- TABELA: ingressos
--- Cada ingresso pertence a uma sessao e tem um valor definido
--- pelo gestor. A compra gera um registro vinculando ao cliente.
--- ------------------------------------------------------------
 CREATE TABLE ingressos (
   id            INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   sessao_id     INT UNSIGNED    NOT NULL,
@@ -131,10 +98,6 @@ CREATE TABLE ingressos (
     ON DELETE SET NULL
 );
 
--- ------------------------------------------------------------
--- TABELA: pedidos
--- Agrupa ingressos comprados em uma mesma transacao
--- ------------------------------------------------------------
 CREATE TABLE pedidos (
   id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   cliente_id  INT UNSIGNED    NOT NULL,
@@ -151,10 +114,6 @@ CREATE TABLE pedidos (
     ON DELETE RESTRICT
 );
 
--- ------------------------------------------------------------
--- TABELA: pedido_ingressos
--- Relaciona cada pedido com os ingressos comprados
--- ------------------------------------------------------------
 CREATE TABLE pedido_ingressos (
   pedido_id    INT UNSIGNED NOT NULL,
   ingresso_id  INT UNSIGNED NOT NULL,
@@ -170,11 +129,6 @@ CREATE TABLE pedido_ingressos (
     ON DELETE RESTRICT
 );
 
--- ------------------------------------------------------------
--- VIEWS uteis
--- ------------------------------------------------------------
-
--- Ingresso completo com dados da sessao, peca e cliente
 CREATE OR REPLACE VIEW view_ingressos_completos AS
 SELECT
   i.id                    AS ingresso_id,
@@ -196,7 +150,6 @@ FROM ingressos i
   INNER JOIN sessoes s  ON i.sessao_id  = s.id
   INNER JOIN pecas   p  ON s.peca_id    = p.id;
 
--- Sessao com os atores listados
 CREATE OR REPLACE VIEW view_sessoes_atores AS
 SELECT
   s.id            AS sessao_id,
@@ -213,10 +166,7 @@ FROM sessoes s
   LEFT  JOIN sessao_atores sa ON s.id     = sa.sessao_id
   LEFT  JOIN atores       a  ON sa.ator_id = a.id;
 
--- ------------------------------------------------------------
--- USUARIO GESTOR INICIAL (senha: admin123 - deve ser trocada)
--- Na aplicacao, a senha sera armazenada com bcrypt.
--- Aqui usamos um placeholder para referencia.
--- ------------------------------------------------------------
 INSERT INTO usuarios (nome, email, senha, perfil, ativo)
 VALUES ('Administrador', 'admin@teatro.com', 'HASH_BCRYPT_AQUI', 'gestor', 1);
+
+UPDATE usuarios SET senha = '$2b$10$tgSK.1fURKmoeIN4aznhJ.98B1ULTjeHQucn/3XMRXvhRQ.PnTftm' WHERE email = 'admin@teatro.com';
