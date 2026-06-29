@@ -122,7 +122,11 @@ export default function GestorIngressos() {
             {!ingressos.length && <p className="text-[#a0a0b0]">Nenhum ingresso criado para esta sessao.</p>}
             {ingressos.map(i => (
               <div key={i.id} className="bg-[#16213e] border border-[#2a2a4a] rounded-lg px-5 py-4 flex items-center justify-between">
+<<<<<<< HEAD
                 <div>.
+=======
+                <div>
+>>>>>>> 4773331e28f13be2a761a411b2d8ef0a74185e94
                   <p className="font-semibold">R$ {parseFloat(i.valor).toFixed(2)}</p>
                   {i.descricao && <p className="text-[#a0a0b0] text-sm">{i.descricao}</p>}
                   <p className="text-xs mt-1">

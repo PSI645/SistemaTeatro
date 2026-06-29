@@ -15,7 +15,11 @@ export default function Login() {
   async function handleSubmit(e) {
     e.preventDefault();
     setErro('');
+<<<<<<< HEAD
     const rota = tipo === 'usuario' ? '/auth/login/usuario' : '/auth/login/cliente';
+=======
+    const rota = tipo === 'cliente' ? '/auth/login/cliente' : '/auth/login/usuario';
+>>>>>>> 4773331e28f13be2a761a411b2d8ef0a74185e94
     try {
       const { data } = await api.post(rota, { email, senha });
       login(data);
